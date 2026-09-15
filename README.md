@@ -12,6 +12,7 @@ This repository contains the starter code for many different projects. They are 
 oh look a change
 
 Note to self:
-git add
-git commit -m "comment"
-git push (default options are: origin main)
+
+* git add
+* git commit -m "comment"
+* git push (default options are: origin main)
