@@ -21,12 +21,15 @@ class Program
 
             if (option == "q")
             {
+                Console.Clear();
                 break;
             }
 
             // List options
             var quotes = library.GetQuotes();
             Console.Clear();
+
+            Console.WriteLine("\nChoose\n");
 
             for (int i = 0; i < quotes.Count; i++)
             {
@@ -35,7 +38,10 @@ class Program
 
             Console.Write($"\nEnter number\n> ");
             int index = int.Parse(Console.ReadLine());
+
+            // FORCE the terminal to reset ALL THE WAY
             Console.Clear();
+            Console.WriteLine("\x1b[3J\x1b[H"); // I have tried everything. And finally, like the sun rising over the hills, something that actually works!
 
             Quote quote = quotes[index - 1];
 
@@ -44,7 +50,7 @@ class Program
             // do the erasure thing
             while (input != "q")
             {
-                Console.Clear();
+                // Console.Clear();
                 Console.WriteLine(quote.GetDisplayText());
 
                 // Check if fully hidden
