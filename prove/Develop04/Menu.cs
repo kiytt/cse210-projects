@@ -36,30 +36,34 @@ public class Menu
 
     public string GetChoice() // returns first alias in aliases array
     {
-        // Console.WriteLine();
-        Console.Clear();
+        while (true)
+        {
+            // Console.WriteLine();
+            Console.Clear();
 
-        for (int i = 0; i < _displayNames.Count(); i++) // for all display names
-        {
-            Console.WriteLine(_displayNames[i]);
-        }
-        Console.Write("> ");
-        string input = Console.ReadLine().Trim().ToLower();
-        
-        for (int i = 0; i < _aliases.Count(); i++) // for all groups of aliases
-        {
-            foreach (string alias in _aliases[i]) // for each alias per group (array) of aliases
+            for (int i = 0; i < _displayNames.Count(); i++) // for all display names
             {
-                if (input == alias.ToLower()) // if the user input is one of the aliases in a group (still an array)
-                {
-                    Console.Clear();
-                    return _aliases[i][0]; // return the first alias in that group (...)
-                }
+                Console.WriteLine(_displayNames[i]);
             }
+            Console.Write("> ");
+            string input = Console.ReadLine().Trim().ToLower();
+            
+            for (int i = 0; i < _aliases.Count(); i++) // for all groups of aliases
+            {
+                foreach (string alias in _aliases[i]) // for each alias per group (array) of aliases
+                {
+                    if (input == alias.ToLower()) // if the user input is one of the aliases in a group (still an array)
+                    {
+                        Console.Clear();
+                        return _aliases[i][0]; // return the first alias in that group (...)
+                    }
+                }
 
+            }
+            Console.Clear();
+            Console.WriteLine("Invalid option. Press any key to continue.");
+            Console.ReadLine();
         }
-        Console.Clear();
-        return "incorrect alias"; // couldn't find user input in aliases
 
     }
 }

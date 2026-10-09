@@ -34,20 +34,20 @@ public class Activity
         _duration = int.Parse(Console.ReadLine());
     }
 
-    public void End(Spinner spinner)
+    public void End(int time, Spinner spinner)
     {
         Console.Clear();
-        Console.WriteLine($"Nice. You endured the {_activityName} for {_duration} seconds.");
-        spinner.Play(5);
+        Console.WriteLine($"Good. You endured the {_activityName} for {_duration} seconds.");
+        spinner.Play(time);
     }
 
-    public void Prepare(string message, Spinner spinner)
+    public void Prepare(string message, int time, Spinner spinner)
     {
         Console.Clear();
         Console.WriteLine(message);
         Console.WriteLine();
 
-        spinner.Play(5);
+        spinner.Play(time);
     }
 
     public void Run(Spinner spinner)
