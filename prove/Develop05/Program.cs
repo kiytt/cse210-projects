@@ -11,7 +11,7 @@ class Program
         List<string> msg = ["Super secure, completely safe ", "We don't need encryption where we're going!\n\n", "Honestly, you don't even need to include a ", "Password must contain:\nAt least 8 characters\nThree capital letters\nOne special character\nYour father's maiden name\nThe capital of a country whose name is the same length as the number of the month you were born\nTwo lower case letters\nA number\nThe reason for the matter-antimatter asymmetry in the Universe\n\n"];
         
         // "login" //////////////////////////////////////////////////////////////////////////////////
-        Console.Write("Name: ");
+        Console.Write("Username: ");
         string name = Console.ReadLine();
         Console.WriteLine();
         Console.Write($"{msg[rand.Next(0,msg.Count)]}Password: ");
