@@ -1,0 +1,4 @@
+SimpleGoal|Finish this project|what it says on the tin|20|True
+EternalGoal|Get 8 hours of sleep|Please|5|False|2
+ChecklistGoal|Scritches|give birds scritches|3|False|1|10|6
+SimpleGoal|GIMME POINTS||50|True
