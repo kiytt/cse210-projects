@@ -1,0 +1,4 @@
+name:electron,charge:-1,spin:1/2,mass:0.511,classification:lepton,interactsWith:electromagnetism weak,isAntiparticle:false,consituents:none,baryonNumber:0,leptonNumber:1
+name:photon,charge:0,spin:1,mass:0,classification:gauge_boson,interactsWith:none,isAntiparticle:false,consituents:none,baryonNumber:0,leptonNumber:0
+name:electron neutrino,charge:0,spin:1/2,mass:<0.0000008,classification:lepton,interactsWith:weak,isAntiparticle:false,constituents:none,baryonNumber:0,leptonNumber:1
+name:proton,charge:+1,spin:1/2,mass:938,classification:baryon,interactsWith:strong electromagnetic weak,isAntiparticle:false,constituents:uud,baryonNumber:1,leptonNumber:0
