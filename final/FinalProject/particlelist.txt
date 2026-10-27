@@ -1,4 +1,13 @@
-name:electron,charge:-1,spin:1/2,mass:0.511,classification:lepton,interactsWith:electromagnetism weak,isAntiparticle:false,consituents:none,baryonNumber:0,leptonNumber:1
-name:photon,charge:0,spin:1,mass:0,classification:gauge_boson,interactsWith:none,isAntiparticle:false,consituents:none,baryonNumber:0,leptonNumber:0
-name:electron neutrino,charge:0,spin:1/2,mass:<0.0000008,classification:lepton,interactsWith:weak,isAntiparticle:false,constituents:none,baryonNumber:0,leptonNumber:1
-name:proton,charge:+1,spin:1/2,mass:938,classification:baryon,interactsWith:strong electromagnetic weak,isAntiparticle:false,constituents:uud,baryonNumber:1,leptonNumber:0
+name:electron,charge:-1,spin:1/2,mass:0.511,classification:lepton,interactsWith:electromagnetism weak,isAntiparticle:False,flavor:electron,leptonNumber:1
+name:positron,charge:+1,spin:1/2,mass:0.511,classification:lepton,interactsWith:electromagnetism weak,isAntiparticle:True,flavor:electron,leptonNumber:-1
+name:photon,charge:0,spin:1,mass:0,classification:gaugeboson,interactsWith:,isAntiparticle:False,mediatedForce:electromagnetism
+name:proton,charge:+1,spin:1/2,mass:938,classification:baryon,interactsWith:electromagnetism strong,isAntiparticle:False,constituentQuarks:up up down,baryonNumber:1
+name:electronneutrino,charge:0,spin:1/2,mass:0.0000008,classification:lepton,interactsWith:weak,isAntiparticle:False,flavor:electron,leptonNumber:1
+name:up,charge:+2/3,spin:1/2,mass:2.16,classification:quark,interactsWith:electromagnetism strong,isAntiparticle:False,baryonNumber:1/3,up:1,down:0,strangeness:0,charm:0,bottomness:0,topness:0
+name:antidown,charge:+1/3,spin:1/2,mass:4.7,classification:quark,interactsWith:electromagnetism strong,isAntiparticle:True,baryonNumber:-1/3,up:0,down:-1,strangeness:0,charm:0,bottomness:0,topness:0
+name:pion,charge:+1,spin:0,mass:140,classification:meson,interactsWith:electromagnetism strong,isAntiparticle:False,constituentQuarks:up antidown,baryonNumber:0
+name:neutron,charge:0,spin:1/2,mass:940,classification:baryon,interactsWith:strong,isAntiparticle:False,constituentQuarks:up down down,baryonNumber:1
+name:electronantineutrino,charge:0,spin:1/2,mass:0.00000045,classification:lepton,interactsWith:weak,isAntiparticle:True,flavor:electron,leptonNumber:-1
+name:muon,charge:-1,spin:1/2,mass:105.66,classification:lepton,interactsWith:electromagnetism weak,isAntiparticle:False,flavor:muon,leptonNumber:1
+name:muonneutrino,charge:0,spin:1/2,mass:0.19,classification:lepton,interactsWith:weak,isAntiparticle:False,flavor:muon,leptonNumber:1
+name:down,charge:-1/3,spin:1/2,mass:4.7,classification:quark,interactsWith:electromagnetism strong,isAntiparticle:False,baryonNumber:1/3,up:0,down:1,strangeness:0,charm:0,bottomness:0,topness:0

@@ -1,16 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-public class Validate // partially rewritten
+public class Validate
 {
-    private List<Particle> _initialParticles;
-    private List<Particle> _finalParticles;
-
-    public Validate(string initial, string final)
-    {
-        _initialParticles = ParseParticleString(initial);
-        _finalParticles = ParseParticleString(final);
-    }
+    private ParticleDatabase _db = new ParticleDatabase();
 
     public List<Particle> ParseParticleString(string input)
     {
@@ -23,56 +16,22 @@ public class Validate // partially rewritten
             string cleanName = name.Trim();
             if (cleanName.Length > 0)
             {
-                List<string> matches = db.Find("name", cleanName);
+                List<Particle> matches = db.Find("name", cleanName);
                 if (matches.Count > 0)
                 {
-                    string rawLine = matches[0];
-                    Particle p = CreateParticleFromRawLine(rawLine);
-                    if (p != null) particles.Add(p);
+                    particles.Add(matches[0]);
+                }
+                else
+                {
+                    Particle newP = db.PromptAndAdd(cleanName);
+                    if (newP != null)
+                    {
+                        particles.Add(newP);
+                    }
                 }
             }
         }
         return particles;
-    }
-
-    private Particle CreateParticleFromRawLine(string line)
-    {
-        string classification = "";
-        foreach (string pair in line.Split(','))
-        {
-            string[] kv = pair.Split(':');
-            if (kv.Length == 2 && kv[0].Trim().ToLower() == "classification")
-            {
-                classification = kv[1].Trim().ToLower();
-                break;
-            }
-        }
-
-        if (classification == "quark")
-        {
-            return new Quark(line);
-        }
-        else if (classification == "lepton")
-        {
-            return new Lepton(line);
-        }
-        else if (classification == "baryon")
-        {
-            return new Baryon(line);
-        }
-        else if (classification == "meson")
-        {
-            return new Meson(line);
-        }
-        else if (classification == "gauge_boson" || classification == "gaugeboson")
-        {
-            return new GaugeBoson(line);
-        }
-        else if (classification == "scalar_boson" || classification == "scalarboson")
-        {
-            return new ScalarBoson(line);
-        }
-        return null; // apparently is not none
     }
 
         public bool ContainsParticle(List<Particle> particles, string particleType)
@@ -81,7 +40,7 @@ public class Validate // partially rewritten
         {
             string name = p.GetName();
             
-            if (particleType == "photon" && (name == "photon" || name == "γ"))
+            if (particleType == "photon" && (name == "photon"))
             {
                 return true;
             }
@@ -97,80 +56,79 @@ public class Validate // partially rewritten
         return false;
     }
 
-    public string MediatingForce()
+    private (double charge, double baryon, int lepton, int up, int down, int charm, int strange, int top, int bottom) 
+    AggregateParticles(List<Particle> particles)
     {
-        double chargeI = 0, chargeF = 0;
-        int baryNumI = 0, baryNumF = 0;
-        int leptNumI = 0, leptNumF = 0;
+        double charge = 0, baryon = 0;
+        int lepton = 0, up = 0, down = 0, charm = 0, strange = 0, top = 0, bottom = 0;
 
-        int upI = 0, downI = 0, charmI = 0, strangeI = 0, topI = 0, bottomI = 0;
-        int upF = 0, downF = 0, charmF = 0, strangeF = 0, topF = 0, bottomF = 0;
-
-        foreach (Particle p in _initialParticles)
+        foreach (Particle p in particles)
         {
-            chargeI += p.GetCharge();
-            baryNumI += p.GetBaryonNumber();
-            leptNumI += p.GetLeptonNumber();
-            upI += p.GetUpNum();
-            downI += p.GetDownNum();
-            charmI += p.GetCharm();
-            strangeI += p.GetStrangeness();
-            topI += p.GetTopness();
-            bottomI += p.GetBottomness();
+            charge += p.GetCharge();
+            baryon += p.GetBaryonNumber();
+            lepton += p.GetLeptonNumber();
+            up += p.GetUpNum();
+            down += p.GetDownNum();
+            charm += p.GetCharm();
+            strange += p.GetStrangeness();
+            top += p.GetTopness();
+            bottom += p.GetBottomness();
         }
 
-        foreach (Particle p in _finalParticles)
-        {
-            chargeF += p.GetCharge();
-            baryNumF += p.GetBaryonNumber();
-            leptNumF += p.GetLeptonNumber();
-            upF += p.GetUpNum();
-            downF += p.GetDownNum();
-            charmF += p.GetCharm();
-            strangeF += p.GetStrangeness();
-            topF += p.GetTopness();
-            bottomF += p.GetBottomness();
-        }
+        return (charge, baryon, lepton, up, down, charm, strange, top, bottom);
+    }
 
-        bool flavorsConserved = (upI == upF) && (downI == downF) && 
-                                (charmI == charmF) && (strangeI == strangeF) && 
-                                (topI == topF) && (bottomI == bottomF);
+    public string MediatingForce(string initialInput, string finalInput)
+    {
+        string interaction = "";
+        List<Particle> initialParticles = ParseParticleString(initialInput);
+        List<Particle> finalParticles = ParseParticleString(finalInput);
 
-        if (Math.Abs(chargeI - chargeF) < 1e-5 && baryNumI == baryNumF && leptNumI == leptNumF)
+        var initial = AggregateParticles(initialParticles);
+        var final = AggregateParticles(finalParticles);
+
+        bool flavorsConserved = (initial.up == final.up) && (initial.down == final.down) && 
+                                (initial.charm == final.charm) && (initial.strange == final.strange) && 
+                                (initial.top == final.top) && (initial.bottom == final.bottom);
+
+        if (Math.Abs(initial.charge - final.charge) < 1e-5 && 
+            initial.baryon == final.baryon && 
+            initial.lepton == final.lepton)
         {
-            if (ContainsParticle(_initialParticles, "photon") || ContainsParticle(_finalParticles, "photon"))
+            if (ContainsParticle(initialParticles, "photon") || ContainsParticle(finalParticles, "photon"))
             {
-                return "Electromagnetic";
+                interaction = "electromagnetic";
             }
             else
             {
                 if (flavorsConserved)
                 {
-                    if (ContainsParticle(_initialParticles, "neutrino") || ContainsParticle(_finalParticles, "neutrino"))
+                    if (ContainsParticle(initialParticles, "neutrino") || ContainsParticle(finalParticles, "neutrino"))
                     {
-                        return "Weak";
+                        interaction = "weak";
                     }
                     else
                     {
-                        if (ContainsParticle(_initialParticles, "lepton") || ContainsParticle(_finalParticles, "lepton"))
+                        if (ContainsParticle(initialParticles, "lepton") || ContainsParticle(finalParticles, "lepton"))
                         {
-                            return "Likely electromagnetic, can be neutral weak";
+                            interaction = "likely electromagnetic, can be neutral weak";
                         }
                         else
                         {
-                            return "Likely strong, can be neutral weak";
+                            interaction = "likely strong, can be neutral weak";
                         }
                     }
                 }
                 else
                 {
-                    return "Charged weak";
+                    interaction = "charged weak";
                 }
             }
         }
         else
         {
-            return "Forbidden";
+            interaction = "forbidden";
         }
+        return $"\nInteraction is {interaction}";
     }
 }

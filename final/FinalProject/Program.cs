@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics.Tracing;
 
 class Program
 {
     static void Main(string[] args)
     {
+        Console.Clear();
         Menu menu = new Menu();
 
         menu.AddOption($"{menu.Next()}. \x1b[4mI\x1b[24mnteraction validation", new string[] {"interaction validation", "interaction", "i", $"{menu.Current()}"});
@@ -15,21 +17,29 @@ class Program
         while (choice != "quit")
         {
             choice = menu.GetChoice();
+            Console.Clear();
 
             if (choice == "interaction validation") // from old testing
             {
-                Console.WriteLine("Interaction validation");
-                Thread.Sleep(1000*1);
+                Console.WriteLine("Interaction validation\n");
                 
-                Validate validate = new Validate("photon electron", "photon electron");
-                Console.WriteLine(validate.MediatingForce());
+                Validate validate = new Validate();
+                Console.WriteLine("Input like: particle1 particle2 -> particle3 particle4\n");
+                // Console.Write("Initial particles: ");
+                // string initialParticles = Console.ReadLine();
+                // Console.Write("Final particles: ");
+                // string finalParticles = Console.ReadLine();
+                string initialParticles = Console.ReadLine();
+                Console.Write($"\x1b[1A\x1b[2K\x1b[1G{initialParticles} -> ");  // esc is \x1b / [1A is move cursor up one line / [2K is erase entire line / [1G is move cursor to first column (start of line)
+                // noting this here so I stop haveing to look it up https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+                string finalParticles = Console.ReadLine();
+                Console.WriteLine(validate.MediatingForce(initialParticles, finalParticles));
 
                 Console.ReadLine();
             }
             else if (choice == "particle lookup")
             {
-                Console.WriteLine("Particle Lookup");
-                Thread.Sleep(1000*1);
+                Console.WriteLine("Particle Lookup\n");
 
                 Menu lookupMenu = new Menu();
                 lookupMenu.AddOption($"{lookupMenu.Next()}. \x1b[4mS\x1b[24mearch", new string[] {"search", "s", $"{lookupMenu.Current()}"});
@@ -43,21 +53,30 @@ class Program
                     lookupChoice = lookupMenu.GetChoice();
                     if (lookupChoice == "search")
                     {
-                        {
-                        Console.Write("Search by (name, charge, classification):\n> ");
-                        string field = Console.ReadLine();
-                        Console.Write("Search for:\n> ");
-                        string query = Console.ReadLine();
-
                         ParticleDatabase db = new ParticleDatabase();
-                        List<string> matches = db.Find(field, query.Trim().ToLower());
 
-                        if (matches.Count > 0)
+                        Console.Write("Search by (name, charge, classification, all, etc.):\n> ");
+                        string field = Console.ReadLine();
+
+                        List<Particle> entries = new List<Particle>();
+
+                        if (field == "all")
                         {
-                            foreach (string match in matches)
+                            entries = db.ListAll();
+                        }
+                        else
+                        {
+                            Console.Write("Search for:\n> ");
+                            string query = Console.ReadLine();
+                            entries = db.Find(field, query);
+                        }
+
+                        if (entries.Count > 0)
+                        {
+                            Console.WriteLine("\n----------------------------------------");
+                            foreach (Particle p in entries)
                             {
-                                Console.WriteLine("\n----------------------------------------");
-                                foreach (string kv in match.Split(','))
+                                foreach (string kv in p.GetRawLine().Split(','))
                                 {
                                     string[] parts = kv.Split(':');
                                     if (parts.Length == 2)
@@ -72,42 +91,49 @@ class Program
                         {
                             Console.WriteLine("No match found.");
                         }
-                        Console.ReadLine();
-                        }
+                    Console.ReadLine();
+                    Console.Clear();
                     }
                     else if (lookupChoice == "add")
                     {
-                        Console.WriteLine("Enter information:\n");
-                        Console.Write("Name: ");
-                        string name = Console.ReadLine();
-                        Console.Write("Charge: ");
-                        string charge = Console.ReadLine();
-                        Console.Write("Spin: ");
-                        string spin = Console.ReadLine();
-                        Console.Write("Mass (MeV): ");
-                        string mass = Console.ReadLine();
                         Console.Write("Classification: ");
-                        string classification = Console.ReadLine();
-                        Console.Write("Interacts with these forces (i.e. electromagnetism weak): ");
-                        string interactsWith = Console.ReadLine();
-                        Console.Write("Is an antiparticle (i.e. false): ");
-                        string isAntiparticle = Console.ReadLine();
-                        Console.Write("Constituents: (i.e. none or uds): ");
-                        string constituents = Console.ReadLine();
-                        Console.Write("Baryon Number: ");
-                        string baryonNumber = Console.ReadLine();
-                        Console.Write("Lepton Number: ");
-                        string leptonNumber = Console.ReadLine();
+                        string classification = Console.ReadLine().Trim().ToLower();
 
-                        string rawLine = $"name:{name},charge:{charge},spin:{spin},mass:{mass},classification:{classification},interactsWith:{interactsWith},isAntiparticle:{isAntiparticle},constituents:{constituents},baryonNumber:{baryonNumber},leptonNumber:{leptonNumber}";
-
-                        if (!string.IsNullOrWhiteSpace(rawLine))
+                        string rawLine = "";
+                        if (classification == "scalarboson")
                         {
-                            ParticleDatabase db = new ParticleDatabase();
-                            db.Save(rawLine.Trim());
-                            Console.WriteLine("Saved to database.");
+                            rawLine = ScalarBoson.PromptAndBuild();
                         }
-                        Console.ReadLine();
+                        else if (classification == "gaugeboson")
+                        {
+                            rawLine = GaugeBoson.PromptAndBuild();
+                        }
+                        else if (classification == "lepton")
+                        {
+                            rawLine = Lepton.PromptAndBuild();
+                        }
+                        else if (classification == "baryon")
+                        {
+                            rawLine = Baryon.PromptAndBuild();
+                        }
+                        else if (classification == "meson")
+                        {
+                            rawLine = Meson.PromptAndBuild();
+                        }
+                        else if (classification == "quark")
+                        {
+                            rawLine = Quark.PromptAndBuild();
+                        }
+                        else
+                        {
+                            rawLine = null;
+                        }
+
+                        ParticleDatabase db = new ParticleDatabase();
+                        if (!string.IsNullOrEmpty(rawLine))
+                        {
+                            db.Save(rawLine);
+                        }
                     }
                     
                 }

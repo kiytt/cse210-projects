@@ -8,9 +8,11 @@ public abstract class Particle
     private string _classification;
     private List<string> _interactsWith;
     private bool _isAntiparticle;
+    private string _rawLine;
 
     public Particle(string line)
     {
+        _rawLine = line;
         _interactsWith = new List<string>();
         foreach (string pair in line.Split(','))
         {
@@ -29,7 +31,7 @@ public abstract class Particle
         }
     }
 
-    protected double ParseNumber(string str)
+    public double ParseNumber(string str)
     {
         if (str.Contains('/'))
         {
@@ -39,6 +41,36 @@ public abstract class Particle
         return double.Parse(str);
     }
 
+    public static string GetCommonInputs(string classification)
+    {
+        Console.Write("Name: ");
+        string name = Console.ReadLine().Trim();
+        
+        Console.Write("Charge: ");
+        string charge = Console.ReadLine().Trim();
+
+        Console.Write("Spin: ");
+        string spin = Console.ReadLine().Trim();
+
+        Console.Write("Mass (MeV): ");
+        string mass = Console.ReadLine().Trim();
+
+        Console.Write("Is an antiparticle (true/false): ");
+        bool isAntiparticle = bool.Parse(Console.ReadLine().Trim());
+
+        List<string> forces = new List<string> {};
+        if (charge != "0") forces.Add("electromagnetism");
+        if (classification.Contains("quark") || classification.Contains("baryon") || classification.Contains("meson"))
+            forces.Add("strong");
+        if (classification.Contains("lepton"))
+            forces.Add("weak");
+
+        return $"name:{name},charge:{charge},spin:{spin},mass:{mass},classification:{classification},interactsWith:{string.Join(" ", forces)},isAntiparticle:{isAntiparticle}";
+    }
+    public string GetRawLine()
+    {
+        return _rawLine;
+    }
     public double GetCharge()
     {
         return _charge;
@@ -53,7 +85,7 @@ public abstract class Particle
     {
         return _name.ToLower();
     }
-    public virtual int GetBaryonNumber()
+    public virtual double GetBaryonNumber()
     {
         return 0;
     }
